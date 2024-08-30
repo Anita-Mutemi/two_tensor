@@ -42,7 +42,7 @@ api-analytics = "^1.2.2"
 
 [tool.poetry.group.crm_fastapi.dependencies]
 uvicorn = "^0.22.0"
-arbm_core = { path = "./arbm_core-maine" }
+arbm_core = { path = "./arbm_maine" }
 
 [tool.poetry.dev-dependencies]
 black = "^22.6.0"
