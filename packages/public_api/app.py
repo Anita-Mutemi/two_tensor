@@ -23,6 +23,7 @@ from .schemas.user import User
 
 from .dependencies import LoggedInUser
 from .utils import ACCESS_TOKEN_EXPIRE_MINUTES, authenticate_user, create_access_token, log_user_event
+from packages.crm.crm.routers import clients
 
 
 logger.remove()
@@ -51,6 +52,7 @@ app.include_router(marketing.router, prefix='/v1/landing')
 app.include_router(reports.router, prefix='/v1/reports')
 app.include_router(search.router, prefix='/v1/search')
 app.include_router(user.router, prefix='/v1/user')
+app.include_router(user.router, prefix='/v1/clients')
 
 
 origins = [

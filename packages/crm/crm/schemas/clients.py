@@ -3,13 +3,13 @@ from uuid import UUID
 
 from loguru import logger
 from pydantic import BaseModel, EmailStr, constr, validator
-from pytz import common_timezones_set
+from pytz import common_timezones_set # type: ignore
 
 from arbm_core.public.users import MembershipPlan
 
 from ..schemas import AllOptional
 
-from util import Weekday
+from ...util import Weekday
 
 
 class ClientUserCreateSchema(BaseModel):

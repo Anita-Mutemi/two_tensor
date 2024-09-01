@@ -1,10 +1,10 @@
 from typing import Annotated
 from uuid import UUID
 
-from loguru import logger
+from loguru import logger # type: ignore
 
-from sqlalchemy import select
-from fastapi import APIRouter, Body, Depends, HTTPException
+from sqlalchemy import select # type: ignore
+from fastapi import APIRouter, Body, Depends, HTTPException # type: ignore
 
 from arbm_core.private.investors import Fund
 from arbm_core.public.users import AutoProjectList, ClientUser

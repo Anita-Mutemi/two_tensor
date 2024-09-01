@@ -19,7 +19,7 @@ from packages.public_api.routers.graph import Graph, build_graph
 router = APIRouter()
 
 @router.post('/market_map')
-def search_graph(session: PrivateSession, search_filters: SearchFiltersSchema) -> Graph:
+def search_graph(session: PrivateSession, search_filters: SearchFiltersSchema) -> Graph: # type: ignore
     project_uuids = search_and_publish(private_s=session, search_filters=search_filters)
 
     graph = build_graph(project_uuids, current_user=None, public_s=session)
