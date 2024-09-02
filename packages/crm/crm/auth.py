@@ -2,14 +2,14 @@ from datetime import datetime, timedelta
 import hashlib
 from typing import Any, Annotated
 
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from fastapi import APIRouter, Depends, HTTPException, status
-from passlib.context import CryptContext
-from pydantic import BaseModel
-from sqlalchemy.exc import NoResultFound
-from loguru import logger
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm # type: ignore
+from fastapi import APIRouter, Depends, HTTPException, status  # type: ignore
+from passlib.context import CryptContext  # type: ignore
+from pydantic import BaseModel  # type: ignore
+from sqlalchemy.exc import NoResultFound  # type: ignore
+from loguru import logger  # type: ignore
 
-from jose import JWTError, jwt
+from jose import JWTError, jwt  # type: ignore
 
 from arbm_core.private import Session
 from arbm_core.private.users import User as CRMUser

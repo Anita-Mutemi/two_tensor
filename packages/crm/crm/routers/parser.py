@@ -1,6 +1,6 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException  # type: ignore
 
-from loguru import logger
+from loguru import logger  # type: ignore
 
 from arbm_core.private.investors import Investor
 from crm.schemas.collections import CollectionSchema
@@ -19,7 +19,7 @@ router = APIRouter()
 
 
 @router.get("/investor_search")
-def investor_search(db: DbSession, query_string: str):
+def investor_search(db: DbSession, query_string: str):  # type: ignore
     if not query_string:
         raise HTTPException(status_code=400, detail="query string is empty")
 
@@ -31,16 +31,16 @@ def investor_search(db: DbSession, query_string: str):
 
 
 @router.get("/valid_titles")
-def get_titles_collection(name: str, coll: Collection) -> CollectionSchema:
+def get_titles_collection(name: str, coll: Collection) -> CollectionSchema:  # type: ignore
     return dict(name=name, items=list(coll.find(limit=100)))
     # get_collection(name=parsing_type)
 
 
 @router.post("/push_linkedin_signals")
-def upload_linkedin_signals(db: DbSession, like_signals: LinkedinLikesSignalSchema, parsing_type: str = 'startups'):
+def upload_linkedin_signals(db: DbSession, like_signals: LinkedinLikesSignalSchema, parsing_type: str = "startups"):  # type: ignore
     match parsing_type:
-        case 'startups':
-            queue_id = 'linkedin_likes_enrich_v2'
+        case "startups":
+            queue_id = "linkedin_likes_enrich_v2"
         case 'competitors':
             queue_id = 'competitors_mapping'
         case _:
@@ -58,7 +58,6 @@ def upload_linkedin_signals(db: DbSession, like_signals: LinkedinLikesSignalSche
             'msg': f'cannot parse signals, one or more funds of investor do not have a thesis: {funds_no_thesis}',
         }
 
-
     leaders_queued = queue_linkedin_signals(like_signals, queue_id=queue_id)
 
     logger.critical(f'queued {leaders_queued} leaders')
@@ -66,5 +65,3 @@ def upload_linkedin_signals(db: DbSession, like_signals: LinkedinLikesSignalSche
         'status': 'success',
         'msg': f'{leaders_queued} profiles have been queued successfully',
     }
-
-

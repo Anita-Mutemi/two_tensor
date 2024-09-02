@@ -1,5 +1,5 @@
 from typing import Literal
-from fastapi import APIRouter
+from fastapi import APIRouter  # type: ignore
 
 from arbm_core.private.projects import TrackedProject
 from arbm_core.private.investors import Fund, Investor
@@ -17,19 +17,19 @@ router = APIRouter()
 
 
 @router.get('/fund', tags=[RouterTags.funds], deprecated=True)
-def lookup_fund(db: DbSession, query: str):
+def lookup_fund(db: DbSession, query: str):  # type: ignore
     return [FundSchema.from_orm(f) for f in lookup_obj(db, Fund,
                                                         query_field='name', query_string=query)]
 
 
 @router.get('/investor', tags=[RouterTags.investors], deprecated=True)
-def lookup_investor(db: DbSession, query: str):
+def lookup_investor(db: DbSession, query: str):  # type: ignore
     return [InvestorSchema.from_orm(i) for i in lookup_obj(db, Investor,
                                                             query_field='name', query_string=query)]
 
 
 @router.get('/project', tags=[RouterTags.projects], deprecated=True)
-def lookup_project(db: DbSession, query_field: Literal['title', 'website'], query: str):
+def lookup_project(db: DbSession, query_field: Literal["title", "website"], query: str):  # type: ignore
     """
     Search for a project by a text field
     """

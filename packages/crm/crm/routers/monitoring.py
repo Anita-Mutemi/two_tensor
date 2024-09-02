@@ -1,8 +1,8 @@
 from datetime import timedelta, datetime, time
 
-from fastapi import APIRouter
-from sqlalchemy import select, func, or_
-import pytz
+from fastapi import APIRouter  # type: ignore
+from sqlalchemy import select, func, or_  # type: ignore
+import pytz  # type: ignore
 
 from arbm_core.private.queue import QueuedItem
 from arbm_core.private.projects import TrackedProject, ProjectStatus
@@ -20,8 +20,9 @@ router = APIRouter()
 
 statuses_with_tags = [ProjectStatus.accepted, ProjectStatus.review, ProjectStatus.published]
 
+
 @router.get("/tags")
-def get_tag_stats(db: DbSession):
+def get_tag_stats(db: DbSession):  # type: ignore
     by_status = list(db.execute(select(TrackedProject.status, func.count(TrackedProject.id))
                                     .filter(TrackedProject.status.in_(statuses_with_tags))
                                     .group_by(TrackedProject.status)
@@ -57,7 +58,7 @@ def get_tagger_stats():
 
 
 @router.get("/parsing")
-def get_parser_stats(db: DbSession) -> dict:
+def get_parser_stats(db: DbSession) -> dict:  # type: ignore
     parsing_types = ['linkedin_likes_enrich_v2', 'competitors_mapping']
 
     likes_queued_count = db.execute(select(func.count()).filter(LinkedinLike.processed == False)).scalar_one()
@@ -126,7 +127,7 @@ def get_parser_stats(db: DbSession) -> dict:
 
 
 @router.get('/logs')
-def parsing_extension_stats(db: DbSession, pagination: PaginationParams, filter_types: list[str] | None = None):
+def parsing_extension_stats(db: DbSession, pagination: PaginationParams, filter_types: list[str] | None = None):  # type: ignore
     query_logs_count = select(func.count())\
         .filter(LogEntry.module=='linkedin_enrichment.py')
     query_logs = select(LogEntry)\

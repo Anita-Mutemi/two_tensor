@@ -2,10 +2,10 @@ from typing import Annotated
 from uuid import UUID
 from pprint import pformat
 
-from fastapi import APIRouter, Body, Depends, HTTPException, Path, Query
-from sqlalchemy import select
+from fastapi import APIRouter, Body, Depends, HTTPException, Path, Query  # type: ignore
+from sqlalchemy import select  # type: ignore
 
-from loguru import logger
+from loguru import logger  # type: ignore
 
 from arbm_core.private.investors import Fund, Investor
 from arbm_core.public.projects import FundProfile
@@ -23,7 +23,7 @@ from ..schemas.entities import FundCreateSchema, FundSchema, FundPatchSchema, In
 router = APIRouter()
 
 
-def get_fund_by_id(fund_id: Annotated[int | UUID, Path()], db: DbSession):
+def get_fund_by_id(fund_id: Annotated[int | UUID, Path()], db: DbSession):  # type: ignore
     print(fund_id)
     match fund_id:
         case int():
@@ -41,7 +41,7 @@ FundById = Annotated[Fund, Depends(get_fund_by_id)]
 
 
 @router.get('/funds', tags=[RouterTags.funds])
-def get_funds(db: DbSession, q: QueryParams) -> list[FundSchema]:
+def get_funds(db: DbSession, q: QueryParams) -> list[FundSchema]:  # type: ignore
     return query_model(db, Fund, q, query_field='name')
 
 
@@ -51,12 +51,12 @@ def get_fund(fund: FundById) -> FundSchema:
 
 
 @router.get('/funds/{fund_id}/clients', tags=[RouterTags.funds])
-def get_fund_clients(db: DbSession, fund: FundById) -> list[OrgSchema]:
+def get_fund_clients(db: DbSession, fund: FundById) -> list[OrgSchema]:  # type: ignore
     return db.scalars(select(ClientOrganization).where(ClientOrganization.funds_portfolio.any(Fund.uuid == fund.uuid))).all()
 
 
 @router.patch('/funds/{fund_id}/client', tags=[RouterTags.funds])
-def add_fund_client(db: DbSession, fund: FundById, organization_id: str) -> list[OrgSchema]:
+def add_fund_client(db: DbSession, fund: FundById, organization_id: str) -> list[OrgSchema]:  # type: ignore
     client = db.get(ClientOrganization, organization_id)
     if not client:
         raise HTTPException(detail="Client not found", status_code=404)
@@ -83,7 +83,7 @@ def add_fund_client(db: DbSession, fund: FundById, organization_id: str) -> list
 
 
 @router.delete('/funds/{fund_id}/client', tags=[RouterTags.funds])
-def remove_fund_client(db: DbSession, fund: FundById, organization_id: str) -> list[OrgSchema]:
+def remove_fund_client(db: DbSession, fund: FundById, organization_id: str) -> list[OrgSchema]:  # type: ignore
     client = db.get(ClientOrganization, organization_id)
 
     client.funds_portfolio = [f for f in client.funds_portfolio if f.uuid != fund.uuid]
@@ -95,9 +95,7 @@ def remove_fund_client(db: DbSession, fund: FundById, organization_id: str) -> l
 
 
 @router.patch('/funds/{fund_id}', tags=[RouterTags.funds])
-def update_fund(fund: FundById,
-                fund_patch: FundPatchSchema,
-                db: DbSession) -> FundSchema:
+def update_fund(fund: FundById, fund_patch: FundPatchSchema, db: DbSession) -> FundSchema:  # type: ignore
     fund_frontend = db.get(FundProfile, fund.uuid)
 
     for attr, value in fund_patch.dict(exclude_unset=True).items():
@@ -115,7 +113,6 @@ def update_fund(fund: FundById,
         if hasattr(fund_frontend, attr):
             setattr(fund_frontend, attr, value)
 
-
     db.add(fund)
 
     if fund_frontend:
@@ -128,17 +125,16 @@ def update_fund(fund: FundById,
 
 
 @router.post('/funds/{fund_id}/publish', tags=[RouterTags.funds])
-def publish_fund(fund: FundById,
-                published: bool,
-                db: DbSession) -> FundSchema:
+def publish_fund(fund: FundById, published: bool, db: DbSession) -> FundSchema:  # type: ignore
     fund.published = published
     db.add(fund)
     db.commit()
 
     return fund
 
+
 @router.get('/investors', tags=[RouterTags.investors])
-def get_investors(db: DbSession, q: QueryParams, funds: Annotated[list[UUID] | None, Query()] = None) -> list[InvestorSchema]:
+def get_investors(db: DbSession, q: QueryParams, funds: Annotated[list[UUID] | None, Query()] = None) -> list[InvestorSchema]:  # type: ignore
     filters = []
     if funds:
         filters = [Investor.funds.any(Fund.uuid.in_(funds))]
@@ -147,7 +143,7 @@ def get_investors(db: DbSession, q: QueryParams, funds: Annotated[list[UUID] | N
 
 
 @router.get('/investors/{investor_id}', tags=[RouterTags.investors])
-def get_investor(investor_id: int, db: DbSession) -> InvestorSchema:
+def get_investor(investor_id: int, db: DbSession) -> InvestorSchema:  # type: ignore
     if not (investor := db.get(Investor, investor_id)):
         raise HTTPException(detail="Investor not found", status_code=404)
     return investor

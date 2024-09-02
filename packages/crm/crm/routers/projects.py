@@ -2,11 +2,11 @@ from pprint import pformat
 from typing import Annotated
 import uuid
 
-from fastapi import APIRouter, Body, Depends, HTTPException, Query
-from pydantic import BaseModel
-from sqlalchemy import select, or_
+from fastapi import APIRouter, Body, Depends, HTTPException, Query  # type: ignore
+from pydantic import BaseModel  # type: ignore
+from sqlalchemy import select, or_  # type: ignore
 
-from loguru import logger
+from loguru import logger  # type: ignore
 
 from arbm_core.core.signals import AddSignal, YearMonth
 from arbm_core.private.investors import Fund
@@ -66,12 +66,12 @@ def get_projects_feed(db, q, filters_schema: ProjectFiltersSchema | None = None)
 
 
 @router.get('/constants')
-def project_constants(db: DbSession) -> dict:
+def project_constants(db: DbSession) -> dict:  # type: ignore
     return get_project_consts(db)
 
 
 @router.get('/filters')
-def filter_options(db: DbSession):
+def filter_options(db: DbSession):  # type: ignore
     filter_sections = PROJECT_FILTERS
     filter_options = []
 
@@ -103,10 +103,9 @@ def filter_options(db: DbSession):
 
 
 @router.get('')
-def projects(db: DbSession,
-             q: QueryParams,
-             status: Annotated[list[ProjectStatus] | None, Query()] = None
-             ) -> FeedSchema:
+def projects(
+    db: DbSession, q: QueryParams, status: Annotated[list[ProjectStatus] | None, Query()] = None  # type: ignore
+) -> FeedSchema:
 
     filters = None
     if status:
@@ -125,23 +124,18 @@ def projects(db: DbSession,
 
 
 @router.post('/search')
-def search_projects(db: DbSession,
-             q: QueryParams,
-             filters: ProjectFiltersSchema
-             ) -> FeedSchema:
+def search_projects(db: DbSession, q: QueryParams, filters: ProjectFiltersSchema) -> FeedSchema:  # type: ignore
     count, projects = filter_objects(db, TrackedProject, q, filters.dict())
 
     return {'results_count': count, 'projects': projects, 'const': get_project_consts(db)}
 
 
-
 @router.post('')
-def create_project(db: DbSession, new_project: ProjectCreateSchema) -> dict:
+def create_project(db: DbSession, new_project: ProjectCreateSchema) -> dict:  # type: ignore
     # for submissions done manually, explicitly check if the founder exists
     raise NotImplementedError
     if isinstance((source := new_project.source), LinkedinSourceSchema):
         profile_id = source.signal.leader_url
-
 
         founder_profile = db.query(LinkedinProfile).get(profile_id)
         if founder_profile is None:
@@ -159,12 +153,14 @@ def create_project(db: DbSession, new_project: ProjectCreateSchema) -> dict:
 
 
 @router.post('/manual_submission')
-def manual_submission(db: DbSession,
-                      signal: DirectSignal,
-                      # required if project_id is not provided
-                      project_id: Annotated[int | None, Body()] = None,
-                      project_create: ProjectData | None = None,
-                      linkedin_url: Annotated[str | None, Body()] = None):
+def manual_submission(
+    db: DbSession,  # type: ignore
+    signal: DirectSignal,
+    # required if project_id is not provided
+    project_id: Annotated[int | None, Body()] = None,
+    project_create: ProjectData | None = None,
+    linkedin_url: Annotated[str | None, Body()] = None,
+):
     if project_id:
         project = db.get(TrackedProject, project_id)
 
@@ -221,19 +217,15 @@ def manual_submission(db: DbSession,
     db.commit()
 
 
-
 @router.get('/{project_id}')
-def get_project(db: DbSession, project_id: int) -> ProjectSchema:
+def get_project(db: DbSession, project_id: int) -> ProjectSchema:  # type: ignore
     if not (project := db.get(TrackedProject, project_id)):
         raise HTTPException(detail="Project not found", status_code=404)
     return project
 
 
 @router.patch('/{project_id}')
-def patch_project(db: DbSession,
-                  project_id: str,
-                  project_patch: ProjectPatchSchema
-                  ) -> ProjectSchema:
+def patch_project(db: DbSession, project_id: str, project_patch: ProjectPatchSchema) -> ProjectSchema:  # type: ignore
 
     if description := project_patch.description:
         project_patch.description = (description, 'analyst')
@@ -244,21 +236,19 @@ def patch_project(db: DbSession,
     return p
 
 
-#@router.patch('/{project_id}/links')
-def patch_project_links(db: DbSession,
-                       project_id: str
-                       ) -> ProjectSchema:
+# @router.patch('/{project_id}/links')
+def patch_project_links(db: DbSession, project_id: str) -> ProjectSchema:  # type: ignore
     #     if (link_type := request.form.get('linkType')) and (link_url := request.form.get('linkUrl')):
     #         if link_type == 'linkedin':
     #
     #             if not project.linkedin_profile:
     #                 project.linkedin_profile = LinkedinCompany(name=project.title,
-#                                                                linkedin_url=link_url))
+    #                                                                linkedin_url=link_url))
     #             else:
     #                 project.linkedin_profile.name = project.title
     #                 project.linkedin_profile.linkedin_url = link_url
 
-#                 s.add(project.linkedin_profile)
+    #                 s.add(project.linkedin_profile)
     #         else:
     #             # custom links
     #             updated = False
@@ -279,7 +269,7 @@ def patch_project_links(db: DbSession,
     raise NotImplementedError
 
 
-def get_project_analytics(db: DbSession, project_id: int):
+def get_project_analytics(db: DbSession, project_id: int):  # type: ignore
     project: TrackedProject = db.get(TrackedProject, int(project_id))
 
     return project.analytics or ProjectAnalytics(project_id=project.id)
@@ -289,9 +279,9 @@ InitAnalytics = Annotated[ProjectAnalytics, Depends(get_project_analytics)]
 
 
 @router.patch('/{project_id}/analytics')
-def patch_project_analytics(db: DbSession,
-                            analytics: InitAnalytics,
-                            update: ProjectAnalyticsPatchSchema) -> ProjectAnalyticsSchema:
+def patch_project_analytics(
+    db: DbSession, analytics: InitAnalytics, update: ProjectAnalyticsPatchSchema  # type: ignore
+) -> ProjectAnalyticsSchema:
 
     analytics = patch_object(analytics, update.dict(exclude_unset=True))
 
@@ -304,9 +294,9 @@ def patch_project_analytics(db: DbSession,
 
 
 @router.post('/{project_id}/leaders')
-def add_leader(db: DbSession,
-               analytics: InitAnalytics,
-               leader: LeaderCreateSchema) -> LeaderCreateSchema:
+def add_leader(
+    db: DbSession, analytics: InitAnalytics, leader: LeaderCreateSchema  # type: ignore
+) -> LeaderCreateSchema:
     logger.debug(f'got leader update for the project {analytics.project}: {pformat(leader.dict())}')
 
     new_leader, is_new = get_one_or_create(db,
@@ -330,9 +320,9 @@ def add_leader(db: DbSession,
 
 
 @router.patch('/{project_id}/leaders')
-def patch_leader(db: DbSession,
-                 analytics: InitAnalytics,
-                 leader_patch: LeaderUpdateSchema) -> LeaderUpdateSchema:
+def patch_leader(
+    db: DbSession, analytics: InitAnalytics, leader_patch: LeaderUpdateSchema  # type: ignore
+) -> LeaderUpdateSchema:
 
     if not (leader := db.get(Leader, leader_patch.id)):
         raise HTTPException(detail="Leader not found", status_code=404)

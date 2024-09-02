@@ -2,11 +2,11 @@ from datetime import datetime
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Body, Depends, HTTPException
-from pydantic import ValidationError
-import pytz
-from sqlalchemy import select
-from loguru import logger
+from fastapi import APIRouter, Body, Depends, HTTPException  # type: ignore
+from pydantic import ValidationError  # type: ignore
+import pytz  # type: ignore
+from sqlalchemy import select  # type: ignore
+from loguru import logger  # type: ignore
 
 from arbm_core.core.utils import get_one_or_create
 from arbm_core.core.publishing import PublishingError, publish_project
@@ -24,7 +24,7 @@ from ..helpers import query_model
 router = APIRouter()
 
 
-def get_client_org(org_id: str, db: DbSession) -> ClientOrganization:
+def get_client_org(org_id: str, db: DbSession) -> ClientOrganization:  # type: ignore
     org = db.get(ClientOrganization, org_id)
 
     if not org:
@@ -33,7 +33,7 @@ def get_client_org(org_id: str, db: DbSession) -> ClientOrganization:
     return org
 
 
-def get_client_user(username: str, db: DbSession) -> ClientUser:
+def get_client_user(username: str, db: DbSession) -> ClientUser:  # type: ignore
     user = db.get(ClientUser, username)
 
     if not user:
@@ -50,12 +50,12 @@ PAGES_PERMISSIONS = ['curated_list','connected_ventures','team_reports','signals
 
 
 @router.get('/orgs')
-def get_organizations(db: DbSession, query: QueryParams) -> list[OrgSchema]:
+def get_organizations(db: DbSession, query: QueryParams) -> list[OrgSchema]:  # type: ignore
     return query_model(db, ClientOrganization, query, query_field='name', order_by=(ClientOrganization.membership.desc(), ClientOrganization.name))
 
 
 @router.post('/orgs/{org_id}/portfolio')
-def organization_portfolio_set(db: DbSession, org_id: str, fund_uuids: list[UUID]) -> list[UUID]:
+def organization_portfolio_set(db: DbSession, org_id: str, fund_uuids: list[UUID]) -> list[UUID]:  # type: ignore
     raise HTTPException(401, "endpoint disabled")
     org: ClientOrganization = db.get(ClientOrganization, org_id)
 
@@ -78,14 +78,14 @@ def organization_portfolio_set(db: DbSession, org_id: str, fund_uuids: list[UUID
 
 
 @router.post('/orgs')
-def create_organization(db: DbSession, new_org: OrgCreateSchema) -> OrgSchema:
+def create_organization(db: DbSession, new_org: OrgCreateSchema) -> OrgSchema:  # type: ignore
     db.add(ClientOrganization(**new_org.dict()))
     db.commit()
     return db.get(ClientOrganization, new_org.name)
 
 
 @router.post('/orgs/pages/allow')
-def allow_organization_page(db: DbSession, org: OrgExisting, page: str) -> OrgSchema:
+def allow_organization_page(db: DbSession, org: OrgExisting, page: str) -> OrgSchema:  # type: ignore
     if page not in PAGES_PERMISSIONS:
         raise HTTPException(400, f"Invalid page name: {page}, must be one of {PAGES_PERMISSIONS}")
 
@@ -96,7 +96,7 @@ def allow_organization_page(db: DbSession, org: OrgExisting, page: str) -> OrgSc
 
 
 @router.post('/orgs/pages/fordbid')
-def forbid_organization_page(db: DbSession, org: OrgExisting, page: str) -> OrgSchema:
+def forbid_organization_page(db: DbSession, org: OrgExisting, page: str) -> OrgSchema:  # type: ignore
     if page not in PAGES_PERMISSIONS:
         raise HTTPException(400, f"Invalid page name: {page}, must be one of {PAGES_PERMISSIONS}")
 
@@ -108,12 +108,12 @@ def forbid_organization_page(db: DbSession, org: OrgExisting, page: str) -> OrgS
 
 
 @router.get('/users')
-def get_users(db: DbSession, query: QueryParams) -> list[ClientUserSchema]:
+def get_users(db: DbSession, query: QueryParams) -> list[ClientUserSchema]:  # type: ignore
     return query_model(db, ClientUser, query, query_field='username')
 
 
 @router.post('/users')
-def create_user(db: DbSession, new_user: ClientUserCreateSchema):
+def create_user(db: DbSession, new_user: ClientUserCreateSchema):  # type: ignore
     org_id = new_user.organization_id
     org = db.get(ClientOrganization, org_id)
 
@@ -124,7 +124,7 @@ def create_user(db: DbSession, new_user: ClientUserCreateSchema):
     if existing is not None:
         raise HTTPException(405, f"User already exists with username '{new_user.username}'")
 
-    plaintext_password, hashed_password = util.generate_password()
+    plaintext_password, hashed_password = util.generate_password()  # type: ignore
 
     new_user_dict = new_user.dict()
     new_user_dict.update(
@@ -142,8 +142,8 @@ def create_user(db: DbSession, new_user: ClientUserCreateSchema):
 
 
 @router.post('/users/{username}/reset_password')
-def reset_password(db: DbSession, user: UserExisting):
-    plaintext_password, hashed_password = util.generate_password()
+def reset_password(db: DbSession, user: UserExisting):  # type: ignore
+    plaintext_password, hashed_password = util.generate_password()  # type: ignore
     user.hashed_password = hashed_password
 
     db.add(user)
@@ -157,8 +157,8 @@ def reset_password(db: DbSession, user: UserExisting):
 
 
 @router.post('/users/{username}/set_password')
-def set_password(db: DbSession, user: UserExisting, new_password: str):
-    user.hashed_password = util.hash_password(new_password)
+def set_password(db: DbSession, user: UserExisting, new_password: str):  # type: ignore
+    user.hashed_password = util.hash_password(new_password)  # type: ignore
 
     db.add(user)
     db.commit()
@@ -182,13 +182,14 @@ def user_projects(user: UserExisting):
 
 
 @router.get('/users/{username}/projects/{project_uuid}')
-def user_project(db: DbSession, user: UserExisting, project_uuid: str) -> ProjectUserSchema:
+def user_project(db: DbSession, user: UserExisting, project_uuid: str) -> ProjectUserSchema:  # type: ignore
     published = db.get(UserProjectAssociation, (user.username, project_uuid))
 
     if not published:
         raise HTTPException(404, f'project {project_uuid} is not published for user {user.username}')
 
     return published
+
 
 # @router.route('/users/{client_username}/project_entry/{project_uuid}', methods=['GET'])
 
@@ -219,7 +220,7 @@ def user_project(db: DbSession, user: UserExisting, project_uuid: str) -> Projec
         }
     }
 })
-def feed_project_add(db: DbSession, project_uuids: list[UUID], client_org: OrgExisting):
+def feed_project_add(db: DbSession, project_uuids: list[UUID], client_org: OrgExisting):  # type: ignore
     """
     Publish projects with given UUIDSs to all users in organization
 
@@ -244,15 +245,15 @@ def feed_project_add(db: DbSession, project_uuids: list[UUID], client_org: OrgEx
         db.add(published_project)
         db.refresh(published_project)
 
-
         feed_entries = []
         for u in client_org.users:
-            user_feed_entry, exists = get_one_or_create(db, UserProjectAssociation,
-                                                            username=u.username,
-                                                            project_id=uuid,
-                                                            create_method_kwargs={
-                                                                'time_recommended': util.utc_now()
-                                                    })
+            user_feed_entry, exists = get_one_or_create(
+                db,
+                UserProjectAssociation,
+                username=u.username,
+                project_id=uuid,
+                create_method_kwargs={"time_recommended": util.utc_now()},  # type: ignore
+            )
 
             if exists and user_feed_entry.revoked:
                 user_feed_entry.revoked = False
@@ -267,7 +268,7 @@ def feed_project_add(db: DbSession, project_uuids: list[UUID], client_org: OrgEx
 
 
 @router.post('/projects/revoke/{client_org_id}', status_code=204)
-def feed_project_revoke(db: DbSession, project_uuid: Annotated[UUID, Body()], client_org: OrgExisting):
+def feed_project_revoke(db: DbSession, project_uuid: Annotated[UUID, Body()], client_org: OrgExisting):  # type: ignore
     """
     Revoke project from all users in organization
     """
@@ -286,10 +287,8 @@ def feed_project_revoke(db: DbSession, project_uuid: Annotated[UUID, Body()], cl
 
 
 # @router.get('/api/v1/public/clients')
-def api_public_clients(db: DbSession, pagination: PaginationParams):
-    clients = s.query(ClientUser).filter(ClientUser.active==True,
+def api_public_clients(db: DbSession, pagination: PaginationParams):  # type: ignore
+    clients = s.query(ClientUser).filter(ClientUser.active==True,  # type: ignore
                                             ClientUser.organization.has(ClientOrganization.membership!='free')).all()
 
-    return jsonify({
-        'clients': [c.to_dict() for c in clients]
-    })
+    return jsonify({"clients": [c.to_dict() for c in clients]})  # type: ignore

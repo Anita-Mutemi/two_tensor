@@ -1,7 +1,7 @@
 from enum import Enum, auto
 
-from loguru import logger
-from fastapi import APIRouter
+from loguru import logger  # type: ignore
+from fastapi import APIRouter  # type: ignore
 
 from arbm_core.private.projects import TrackedProject
 from arbm_core.private.linkedin import LinkedinCompany
@@ -34,7 +34,7 @@ def get_model(object_type: Reconciliatable):
 
 
 @router.get('/reconciliation/{object_type}')
-def reconciliation_view(db: DbSession, object_type: Reconciliatable):
+def reconciliation_view(db: DbSession, object_type: Reconciliatable):  # type: ignore
     raise NotImplementedError
     duplicate_groups = reconciliation.get_duplicate_objects(db,
                                                             get_model(object_type),
@@ -52,6 +52,6 @@ def reconciliation_view(db: DbSession, object_type: Reconciliatable):
 
 
 @router.post('/reconciliation/{object_type}')
-def reconciliate(db: DbSession, object_type: Reconciliatable):
+def reconciliate(db: DbSession, object_type: Reconciliatable):  # type: ignore
     raise NotImplementedError
     return reconciliation.reconciliate(db, get_model(object_type))

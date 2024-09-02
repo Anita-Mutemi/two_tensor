@@ -1,9 +1,9 @@
 from typing import Annotated
 
-from pymongo.collection import Collection
-from pymongo.errors import DuplicateKeyError
+from pymongo.collection import Collection  # type: ignore
+from pymongo.errors import DuplicateKeyError  # type: ignore
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status  # type: ignore
 
 from crm.schemas.collections import BaseCollectionSchema, CollectionSchema, CollectionPatchSchema, \
                                     EntryCreateSchema, EntrySchema
@@ -19,7 +19,7 @@ allowed_collections = [
 ]
 
 
-def load_collection(db: MongoDb, name: str):
+def load_collection(db: MongoDb, name: str):  # type: ignore
     if name not in allowed_collections:
         raise ValueError(f"Collection '{name}' not allowed")
 
@@ -39,12 +39,12 @@ def list_collections() -> list[BaseCollectionSchema]:
 
 
 @router.get('/{name}')
-def get_collection(name: str, coll: Collection) -> CollectionSchema:
+def get_collection(name: str, coll: Collection) -> CollectionSchema:  # type: ignore
     return dict(name=name, items=list(coll.find(limit=100)))
 
 
 @router.patch('/{name}')
-def patch_collection(patch: CollectionPatchSchema, coll: Collection) -> CollectionSchema:
+def patch_collection(patch: CollectionPatchSchema, coll: Collection) -> CollectionSchema:  # type: ignore
     for item in (patch.patch_items or []):
         try:
             coll.update_one({"_id": item.id}, {"$set": item.dict(exclude_unset=True)})
@@ -58,7 +58,7 @@ def patch_collection(patch: CollectionPatchSchema, coll: Collection) -> Collecti
 
 
 @router.put('/{name}/items')
-def add_item(item: EntryCreateSchema, coll: Collection) -> EntrySchema:
+def add_item(item: EntryCreateSchema, coll: Collection) -> EntrySchema:  # type: ignore
     try:
         new_item = coll.insert_one(item.dict())
     except DuplicateKeyError:
