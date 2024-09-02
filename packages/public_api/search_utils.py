@@ -1,11 +1,11 @@
 from typing import Callable
-from loguru import logger
+from loguru import logger  # type: ignore
 from uuid import UUID
 
-from pydantic import ValidationError
-from fastapi import HTTPException
-from sqlalchemy import and_, func, or_
-from sqlalchemy.exc import IntegrityError
+from pydantic import ValidationError  # type: ignore
+from fastapi import HTTPException  # type: ignore
+from sqlalchemy import and_, func, or_  # type: ignore
+from sqlalchemy.exc import IntegrityError  # type: ignore
 
 from arbm_core.core.publishing import publish_project, PublishingError
 from arbm_core.private.projects import TrackedProject, ProjectAnalytics, ProjectTagsAssociation, ProjectTag, ProjectStatus, InvestmentStage

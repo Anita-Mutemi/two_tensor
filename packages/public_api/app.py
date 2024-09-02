@@ -59,7 +59,8 @@ origins = [
     "https://lookingglass.arbmintel.com/",
     "https://lookingglass.arbmintel.com",
     "https://www.lookingglass.arbmintel.com",
-    "*"
+    "http://localhost:3000/",
+    "*",
 ]
 
 origins = ["*"]

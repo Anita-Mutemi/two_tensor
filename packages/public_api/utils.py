@@ -5,22 +5,22 @@ from pprint import pformat
 import re
 
 from typing import Annotated, Any
-from pydantic import BaseModel
-from fastapi import Depends
+from pydantic import BaseModel  # type: ignore
+from fastapi import Depends  # type: ignore
 from datetime import date, datetime, timedelta
 from uuid import UUID
 
-from loguru import logger
-import pytz
+from loguru import logger  # type: ignore
+import pytz  # type: ignore
 
-from fastapi.security import OAuth2PasswordBearer
-from passlib.context import CryptContext
-from scipy import stats
-from sqlalchemy import and_
+from fastapi.security import OAuth2PasswordBearer  # type: ignore
+from passlib.context import CryptContext  # type: ignore
+from scipy import stats  # type: ignore
+from sqlalchemy import and_  # type: ignore
 
 
-from fastapi import HTTPException
-from jose import JWTError, jwt
+from fastapi import HTTPException  # type: ignore
+from jose import JWTError, jwt  # type: ignore
 
 from arbm_core.public.projects import Project, UserProjectAssociation
 from arbm_core.public.users import ClientUser
