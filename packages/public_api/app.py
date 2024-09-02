@@ -3,19 +3,19 @@ import sys
 from pprint import pprint
 import os
 
-from fastapi import Depends, FastAPI, HTTPException, Request, status # type: ignore
-from fastapi.security import OAuth2PasswordRequestForm # type: ignore
-from fastapi.middleware.cors import CORSMiddleware # type: ignore
+from fastapi import Depends, FastAPI, HTTPException, Request, status  # type: ignore
+from fastapi.security import OAuth2PasswordRequestForm  # type: ignore
+from fastapi.middleware.cors import CORSMiddleware  # type: ignore
 
-from api_analytics.fastapi import Analytics # type: ignore
+from api_analytics.fastapi import Analytics  # type: ignore
 
-from fastapi_cache import FastAPICache # type: ignore
-from fastapi_cache.backends.inmemory import InMemoryBackend # type: ignore
+from fastapi_cache import FastAPICache  # type: ignore
+from fastapi_cache.backends.inmemory import InMemoryBackend  # type: ignore
 
 
-import uvicorn # type: ignore
-from pydantic import BaseModel # type: ignore
-from loguru import logger # type: ignore
+import uvicorn  # type: ignore
+from pydantic import BaseModel  # type: ignore
+from loguru import logger  # type: ignore
 
 from .routers import demo, feed, funds, projects, graph, marketing, reports, search, user
 
@@ -35,24 +35,24 @@ class Token(BaseModel):
     token_type: str
 
 
-API_ANALYTICS_KEY = os.environ.get('API_ANALYTICS_KEY', None)
+API_ANALYTICS_KEY = os.environ.get("API_ANALYTICS_KEY", NoneType)
 
 if not API_ANALYTICS_KEY:
-    logger.warning('Could not get API key for api_analytics. Please set the API_ANALYTICS_KEY env variable')
+    logger.warning("Could not get API key for api_analytics. Please set the API_ANALYTICS_KEY env variable")
 
 
 app = FastAPI()
 
-app.include_router(demo.router, prefix='/demo')
-app.include_router(feed.router, prefix='/v1/feed')
-app.include_router(projects.router, prefix='/v1/projects')
-app.include_router(funds.router, prefix='/v1/fund')
-app.include_router(graph.router, prefix='/v1/graph')
-app.include_router(marketing.router, prefix='/v1/landing')
-app.include_router(reports.router, prefix='/v1/reports')
-app.include_router(search.router, prefix='/v1/search')
-app.include_router(user.router, prefix='/v1/user')
-app.include_router(user.router, prefix='/v1/clients')
+app.include_router(demo.router, prefix="/demo")
+app.include_router(feed.router, prefix="/v1/feed")
+app.include_router(projects.router, prefix="/v1/projects")
+app.include_router(funds.router, prefix="/v1/fund")
+app.include_router(graph.router, prefix="/v1/graph")
+app.include_router(marketing.router, prefix="/v1/landing")
+app.include_router(reports.router, prefix="/v1/reports")
+app.include_router(search.router, prefix="/v1/search")
+app.include_router(user.router, prefix="/v1/user")
+app.include_router(user.router, prefix="/v1/clients")
 
 
 origins = [
@@ -93,25 +93,29 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
             headers={"WWW-Authenticate": "Bearer"},
         )
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = create_access_token(
-        data={"sub": user.username}, expires_delta=access_token_expires
-    )
+    access_token = create_access_token(data={"sub": user.username}, expires_delta=access_token_expires)
     return {"access_token": access_token, "token_type": "bearer"}
 
 
 @app.get("/users/me")
 async def read_users_me(request: Request, current_user: LoggedInUser) -> User:
-    log_user_event(user=current_user,
-                   event=request.url.path,
-                   details={'ip': request.client,})
+    log_user_event(
+        user=current_user,
+        event=request.url.path,
+        details={
+            "ip": request.client,
+        },
+    )
 
     return current_user
 
 
 def get_filter_options(projects):
-    funds = sorted(list(set([f.name for p in projects for f in p['project'].funds])), key=lambda x: x.lower())
-    verticals = sorted(list(set([v for p in projects for v in (p['project'].verticals or [])])), key=lambda x: x.lower())
-    return {'funds': funds, 'verticals': verticals}
+    funds = sorted(list(set([f.name for p in projects for f in p["project"].funds])), key=lambda x: x.lower())
+    verticals = sorted(
+        list(set([v for p in projects for v in (p["project"].verticals or [])])), key=lambda x: x.lower()
+    )
+    return {"funds": funds, "verticals": verticals}
 
 
 def start():
