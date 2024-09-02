@@ -139,7 +139,7 @@ class DetailsEntry(Base):
 
     __table_args__ = (ExcludeConstraint(
         # don't allow overlapping date ranges
-        (Column('effective_dates'), '&&'),
+        (Column('effective_dates', type_='daterange'), '&&'),
 
         # for project, only one details value is allowed per type within a date range
         (Column('project_id'), '='),

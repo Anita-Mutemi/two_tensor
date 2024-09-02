@@ -38,7 +38,7 @@ from util import read_const_file
 
 from analysis.gpt_tag import GPTTagger
 
-LLAMA_API_KEY = os.environ['LLAMA_API_KEY']
+LLAMA_API_KEY = os.environ.get('LLAMA_API_KEY', "")
 
 
 async def get_company_description(project: TrackedProject, require_all=False):

@@ -19,7 +19,7 @@ from ..schemas.clients import OrgSchema, OrgCreateSchema, \
                                 ClientUserSchema, ClientUserCreateSchema, ProjectUserSchema
 from ..schemas.entities import FundIdentitySchema
 from ..helpers import query_model
-# from ..
+import util
 
 router = APIRouter()
 
@@ -124,7 +124,7 @@ def create_user(db: DbSession, new_user: ClientUserCreateSchema):  # type: ignor
     if existing is not None:
         raise HTTPException(405, f"User already exists with username '{new_user.username}'")
 
-    plaintext_password, hashed_password = util.generate_password()  # type: ignore
+    plaintext_password, hashed_password = util.generate_password()
 
     new_user_dict = new_user.dict()
     new_user_dict.update(
