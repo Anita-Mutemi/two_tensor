@@ -19,7 +19,7 @@ from ..schemas.clients import OrgSchema, OrgCreateSchema, \
                                 ClientUserSchema, ClientUserCreateSchema, ProjectUserSchema
 from ..schemas.entities import FundIdentitySchema
 from ..helpers import query_model
-import util
+from  packages.crm import util
 
 router = APIRouter()
 
