@@ -1,8 +1,8 @@
 import json
 from packages.public_api.app import app
-from fastapi import Request
-from fastapi.responses import JSONResponse
-from starlette.middleware.base import BaseHTTPMiddleware
+from fastapi import Request # type: ignore
+from fastapi.responses import JSONResponse  # type: ignore
+from starlette.middleware.base import BaseHTTPMiddleware  # type: ignore
 
 
 class RequestHandler(BaseHTTPMiddleware):
@@ -13,7 +13,7 @@ class RequestHandler(BaseHTTPMiddleware):
         scope["path"] = "/"
 
         # Handle the request
-        response = await app(scope, receive, send)
+        response = await app(scope, receive, send) # type: ignore
         return JSONResponse(content=response["body"])
 
 
