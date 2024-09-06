@@ -3,9 +3,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
 import sys
 
-from crm.dependencies import RouterTags
-from crm.file_handlers import upload_investors
-import util
+from .dependencies import RouterTags
+from .file_handlers import upload_investors
+from packages.crm import util
 
 from . import auth
 from arbm_core.private import Base, engine

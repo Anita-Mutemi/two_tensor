@@ -6,9 +6,8 @@ from loguru import logger
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
-import util
-from util import clean_url
-
+from ...util import clean_url
+from packages.crm import util
 
 def prepare_df(df):
     df = df.fillna("")

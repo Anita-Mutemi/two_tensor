@@ -12,7 +12,7 @@ from loguru import logger
 
 from sqlalchemy import func, select, and_, inspect
 from sqlalchemy.exc import IntegrityError
-from analysis.statistics import get_untagged_projects
+from .statistics import get_untagged_projects
 
 from arbm_core.core import MongoDb
 from arbm_core.core.signals import get_unique_signals_for_fund
@@ -27,16 +27,16 @@ from arbm_core.private.projects import (
     ProjectTagsAssociation,
     DetailsEntry
 )
-from packages.crm.projects.publishing import publish_project
+from ..projects.publishing import publish_project
 from arbm_core.public.projects import Project
 
-import util
-from analysis import AnnotationError
-from api_external.openai_api import chat_completion, parse_json_response
-from parsing.web_scraper import parse_website
-from util import read_const_file
+from packages.crm import util
+from . import AnnotationError
+from ..api_external.openai_api import chat_completion, parse_json_response
+from ..parsing.web_scraper import parse_website
+from ..util import read_const_file
 
-from analysis.gpt_tag import GPTTagger
+from .gpt_tag import GPTTagger
 
 LLAMA_API_KEY = os.environ.get('LLAMA_API_KEY', "")
 
