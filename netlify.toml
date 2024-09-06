@@ -1,5 +1,2 @@
 [build]
-  command = "curl -sSL https://install.python-poetry.org | python3 && \
-  export PATH=\"/root/.local/bin:$PATH\" && \
-  poetry install && \
-  poetry run uvicorn packages.crm.crm.crm_api:app --host 0.0.0.0 --port 8000"
+  command = "curl -sSL https://install.python-poetry.org | python3 && export PATH=\"/root/.local/bin:$PATH\" && poetry install && poetry run uvicorn packages.crm.crm.crm_api:app --host 0.0.0.0 --port 8000"
